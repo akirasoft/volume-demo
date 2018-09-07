@@ -5,3 +5,8 @@ applications:
   path: APPPATH
 #  services:
 #  - volume-service
+  env:
+    DT_NODE_ID: APPNAME
+#    DT_CUSTOM_PROP: DEPLOYMENT_GRP_NME=DTGRP DEPLOYMENT_COLOR=APPCOLOR
+#    DEPLOYMENT_GRP_NME: DTGRP
+    DUMMY_VAR: changethisagain2
