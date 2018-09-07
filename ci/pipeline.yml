@@ -15,37 +15,37 @@ resources:
   type: git
   source:
     branch: master
-    uri: https://github.com/azwickey-pivotal/volume-demo
+    uri: https://github.com/akirasoft/volume-demo.git
 - name: Cloudfoundry
   type: cf
   source:
-    api: {{cf-api}}
-    organization: {{cf-org}}
-    space: {{cf-space}}
-    username: {{cf-user}}
-    password: {{cf-pwd}}
+    api: ((cf-api))
+    organization: ((cf-org))
+    space: ((cf-space))
+    username: ((cf-user))
+    password: ((cf-pwd))
     skip_cert_check: true
 - name: version
   type: semver
   source:
-    bucket: concourse-demos
+    bucket: acm-workshop-concourse-volume-demo
     key: volume-demo
-    access_key_id: {{s3-access-key-id}}
-    secret_access_key: {{s3-secret-access-key}}
+    access_key_id: ((s3-access-key-id))
+    secret_access_key: ((s3-secret-access-key))
 - name: pre-release
   type: github-release
   source:
-    user: azwickey-pivotal
+    user: akirasoft
     repository: volume-demo
-    access_token: {{github-token}}
+    access_token: ((github-token))
     pre_release: true
     drafts: true
 - name: release
   type: github-release
   source:
-    user: azwickey-pivotal
+    user: akirasoft
     repository: volume-demo
-    access_token: {{github-token}}
+    access_token: ((github-token))
 
 jobs:
 - name: unit-tests
@@ -72,7 +72,7 @@ jobs:
   - task: mvn-package
     file: git-assets/ci/tasks/mvn-package.yml
     params:
-      CF_APP: {{cf-app-name}}
+      CF_APP: ((cf-app-name))
   - put: pre-release
     params:
       name: version/number
@@ -100,21 +100,20 @@ jobs:
     passed:
       - build-artifact
   - get: version
-    params:
   - task: get-current-app-color
     file: git-assets/ci/tasks/current-app-get-info.yml
     params:
-      CF_APP: {{cf-app-name}}
-      CF_APP_DOMAIN: {{cf-app-domain}}
-      CF_API: {{cf-api}}
-      CF_ORG: {{cf-org}}
-      CF_USER: {{cf-user}}
-      CF_PWD: {{cf-pwd}}
-      CF_SPACE: {{cf-space}}
+      CF_APP: ((cf-app-name))
+      CF_APP_DOMAIN: ((cf-app-domain))
+      CF_API: ((cf-api))
+      CF_ORG: ((cf-org))
+      CF_USER: ((cf-user))
+      CF_PWD: ((cf-pwd))
+      CF_SPACE: ((cf-space))
   - task: prepare-app-manifest
     file: git-assets/ci/tasks/app-manifest-prep.yml
     params:
-      CF_APP: {{cf-app-name}}
+      CF_APP: ((cf-app-name))
   - put: Cloudfoundry
     params:
       manifest: ./app-manifest-output/manifest.yml
@@ -131,18 +130,18 @@ jobs:
   - task: get-current-app-color
     file: git-assets/ci/tasks/current-app-get-info.yml
     params:
-      CF_APP: {{cf-app-name}}
-      CF_APP_DOMAIN: {{cf-app-domain}}
-      CF_API: {{cf-api}}
-      CF_ORG: {{cf-org}}
-      CF_USER: {{cf-user}}
-      CF_PWD: {{cf-pwd}}
-      CF_SPACE: {{cf-space}}
+      CF_APP: ((cf-app-name))
+      CF_APP_DOMAIN: ((cf-app-domain))
+      CF_API: ((cf-api))
+      CF_ORG: ((cf-org))
+      CF_USER: ((cf-user))
+      CF_PWD: ((cf-pwd))
+      CF_SPACE: ((cf-space))
   - task: int-testing
     file: git-assets/ci/tasks/int-tests.yml
     params:
-      CF_APP: {{cf-app-name}}
-      CF_APP_DOMAIN: {{cf-app-domain}}
+      CF_APP: ((cf-app-name))
+      CF_APP_DOMAIN: ((cf-app-domain))
 - name: ship-it
   serial: true
   public: true
@@ -155,13 +154,13 @@ jobs:
   - task: get-current-app-color
     file: git-assets/ci/tasks/current-app-get-info.yml
     params:
-      CF_APP: {{cf-app-name}}
-      CF_APP_DOMAIN: {{cf-app-domain}}
-      CF_API: {{cf-api}}
-      CF_ORG: {{cf-org}}
-      CF_USER: {{cf-user}}
-      CF_PWD: {{cf-pwd}}
-      CF_SPACE: {{cf-space}}
+      CF_APP: ((cf-app-name))
+      CF_APP_DOMAIN: ((cf-app-domain))
+      CF_API: ((cf-api))
+      CF_ORG: ((cf-org))
+      CF_USER: ((cf-user))
+      CF_PWD: ((cf-pwd))
+      CF_SPACE: ((cf-space))
   - get: pre-release
   - get: version
     params:
@@ -169,17 +168,17 @@ jobs:
   - task: create-release
     file: git-assets/ci/tasks/release.yml
     params:
-      CF_APP: {{cf-app-name}}
+      CF_APP: ((cf-app-name))
   - task: switch-app-routes
     file: git-assets/ci/tasks/update-routes.yml
     params:
-      CF_APP: {{cf-app-name}}
-      CF_APP_DOMAIN: {{cf-app-domain}}
-      CF_API: {{cf-api}}
-      CF_ORG: {{cf-org}}
-      CF_USER: {{cf-user}}
-      CF_PWD: {{cf-pwd}}
-      CF_SPACE: {{cf-space}}
+      CF_APP: ((cf-app-name))
+      CF_APP_DOMAIN: ((cf-app-domain))
+      CF_API: ((cf-api))
+      CF_ORG: ((cf-org))
+      CF_USER: ((cf-user))
+      CF_PWD: ((cf-pwd))
+      CF_SPACE: ((cf-space))
   - put: release
     params:
       name: version/number
